@@ -16,7 +16,7 @@ RUN dpkg -i "/tmp/$SULDR_KEYRING_DEB" && \
 	apt-add-repository "$SULDR_REPO" && \
 	apt-get update && apt-get install -y \
 	cups \
-	hplip \
+	libcupsimage2 \
 	libcups2-dev \
 	inotify-tools \
 	python3-pip \
