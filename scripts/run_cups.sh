@@ -1,6 +1,5 @@
 #!/bin/sh
 set -e
-set -x
 
 if [ $(grep -ci $CUPSADMIN /etc/shadow) -eq 0 ]; then
     useradd -r -G lpadmin -M $CUPSADMIN 
