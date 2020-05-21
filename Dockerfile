@@ -1,21 +1,28 @@
-FROM ubuntu:zesty
+FROM ubuntu:20.04
 
-# Add repos
-RUN echo 'deb http://us.archive.ubuntu.com/ubuntu/ zesty multiverse' >> /etc/apt/sources.list.d/multiverse.list && \
-	echo 'deb-src http://us.archive.ubuntu.com/ubuntu/ zesty multiverse' >> /etc/apt/sources.list.d/multiverse.list && \
-	echo 'deb http://us.archive.ubuntu.com/ubuntu/ zesty-updates multiverse' >> /etc/apt/sources.list.d/multiverse.list && \
-	echo 'deb-src http://us.archive.ubuntu.com/ubuntu/ zesty-updates multiverse' >> /etc/apt/sources.list.d/multiverse.list && \
-	echo 'deb http://archive.ubuntu.com/ubuntu/ zesty-security multiverse' >> /etc/apt/sources.list.d/multiverse.list && \
-	echo 'deb-src http://archive.ubuntu.com/ubuntu/ zesty-security multiverse' >> /etc/apt/sources.list.d/multiverse.list
+ARG SULDR_REPO="deb https://www.bchemnet.com/suldr/ debian extra"
+ARG SULDR_KEYRING_URL=http://www.bchemnet.com/suldr/pool/debian/extra/su/suldr-keyring_2_all.deb
+ARG SULDR_KEYRING_DEB=suldr-keyring_2_all.deb
 
-# Install the packages we need. Avahi will be included
-RUN apt-get update && apt-get install -y \
-	brother-lpr-drivers-extra brother-cups-wrapper-extra \
+# Set maximum version for CLP-510
+# See https://www.bchemnet.com/suldr/supported.html for all supported models.
+ARG SULDR_VERSION=4.00.39
+
+RUN apt-get update && apt-get upgrade -y && apt-get install -y software-properties-common
+
+ADD $SULDR_KEYRING_URL /tmp/$SULDR_KEYRING_DEB
+
+RUN dpkg -i "/tmp/$SULDR_KEYRING_DEB" && \
+	apt-add-repository "$SULDR_REPO" && \
+	apt-get update && apt-get install -y \
 	cups \
-	cups-pdf \
+	hplip \
+	libcups2-dev \
 	inotify-tools \
-	python-cups \
-&& rm -rf /var/lib/apt/lists/*
+	python3-pip \
+	suld-driver-$SULDR_VERSION \
+	&& pip3 install pycups \
+	&& rm -rf /var/lib/apt/lists/* "/tmp/$SULDR_KEYRING_DEB"
 
 # This will use port 631
 EXPOSE 631
@@ -25,9 +32,10 @@ VOLUME /config
 VOLUME /services
 
 # Add scripts
-ADD root /
-RUN chmod +x /root/*
-CMD ["/root/run_cups.sh"]
+COPY scripts/* /usr/local/bin/
+RUN chmod +x /usr/local/bin/*
+
+CMD ["run_cups.sh"]
 
 # Baked-in config file changes
 RUN sed -i 's/Listen localhost:631/Listen 0.0.0.0:631/' /etc/cups/cupsd.conf && \
@@ -37,4 +45,3 @@ RUN sed -i 's/Listen localhost:631/Listen 0.0.0.0:631/' /etc/cups/cupsd.conf && 
 	sed -i 's/<Location \/admin\/conf>/<Location \/admin\/conf>\n  Allow All/' /etc/cups/cupsd.conf && \
 	echo "ServerAlias *" >> /etc/cups/cupsd.conf && \
 	echo "DefaultEncryption Never" >> /etc/cups/cupsd.conf
-
