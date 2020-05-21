@@ -4,9 +4,9 @@ ARG SULDR_REPO="deb https://www.bchemnet.com/suldr/ debian extra"
 ARG SULDR_KEYRING_URL=http://www.bchemnet.com/suldr/pool/debian/extra/su/suldr-keyring_2_all.deb
 ARG SULDR_KEYRING_DEB=suldr-keyring_2_all.deb
 
-# Set maximum version for CLP-510
+# Appropriate version for CLP-510. Can be overriden in build command if needed.
 # See https://www.bchemnet.com/suldr/supported.html for all supported models.
-ARG SULDR_VERSION=4.00.39
+ARG SULDR_PACKAGE=suld-driver-4.00.39
 
 RUN apt-get update && apt-get upgrade -y && apt-get install -y software-properties-common
 
@@ -20,7 +20,7 @@ RUN dpkg -i "/tmp/$SULDR_KEYRING_DEB" && \
 	libcups2-dev \
 	inotify-tools \
 	python3-pip \
-	suld-driver-$SULDR_VERSION \
+	$SULDR_PACKAGE \
 	&& pip3 install pycups \
 	&& rm -rf /var/lib/apt/lists/* "/tmp/$SULDR_KEYRING_DEB"
 
