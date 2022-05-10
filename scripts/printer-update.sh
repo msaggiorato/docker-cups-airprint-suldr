@@ -5,5 +5,6 @@ while read -r directory events filename; do
 		rm -rf /services/AirPrint-*.service
 		airprint-generate.py -d /services
 		cp /etc/cups/printers.conf /config/printers.conf
+		rsync -avh /services/ /etc/avahi/services/
 	fi
 done
