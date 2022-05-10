@@ -6,7 +6,7 @@ ARG SULDR_KEYRING_DEB=suldr-keyring_2_all.deb
 
 # Appropriate version for CLP-510. Can be overriden in build command if needed.
 # See https://www.bchemnet.com/suldr/supported.html for all supported models.
-ARG SULDR_PACKAGE=suld-driver-4.00.39
+ARG SULDR_PACKAGE=suld-driver2-1.00.39
 
 RUN apt-get update && apt-get upgrade -y && apt-get install -y software-properties-common
 
