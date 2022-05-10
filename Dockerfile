@@ -21,7 +21,7 @@ RUN dpkg -i "/tmp/$SULDR_KEYRING_DEB" && \
 	inotify-tools \
 	python3-pip \
 	rsync \
-	avahi \
+	avahi-daemon \
 	$SULDR_PACKAGE \
 	&& pip3 --no-cache-dir install --upgrade pip \
 	&& pip3 install pycups \
