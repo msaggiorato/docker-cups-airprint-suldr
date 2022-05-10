@@ -20,7 +20,10 @@ RUN dpkg -i "/tmp/$SULDR_KEYRING_DEB" && \
 	libcups2-dev \
 	inotify-tools \
 	python3-pip \
+	rsync \
+	avahi \
 	$SULDR_PACKAGE \
+	&& pip3 --no-cache-dir install --upgrade pip \
 	&& pip3 install pycups \
 	&& rm -rf /var/lib/apt/lists/* "/tmp/$SULDR_KEYRING_DEB"
 
@@ -43,5 +46,6 @@ RUN sed -i 's/Listen localhost:631/Listen 0.0.0.0:631/' /etc/cups/cupsd.conf && 
 	sed -i 's/<Location \/>/<Location \/>\n  Allow All/' /etc/cups/cupsd.conf && \
 	sed -i 's/<Location \/admin>/<Location \/admin>\n  Allow All\n  Require user @SYSTEM/' /etc/cups/cupsd.conf && \
 	sed -i 's/<Location \/admin\/conf>/<Location \/admin\/conf>\n  Allow All/' /etc/cups/cupsd.conf && \
+	sed -i 's/.*enable\-dbus=.*/enable\-dbus\=no/' /etc/avahi/avahi-daemon.conf && \
 	echo "ServerAlias *" >> /etc/cups/cupsd.conf && \
 	echo "DefaultEncryption Never" >> /etc/cups/cupsd.conf
