@@ -50,5 +50,5 @@ RUN sed -i 's/Listen localhost:631/Listen 0.0.0.0:631/' /etc/cups/cupsd.conf && 
 	sed -i 's/.*enable\-dbus=.*/enable\-dbus\=no/' /etc/avahi/avahi-daemon.conf && \
 	echo "ServerAlias *" >> /etc/cups/cupsd.conf && \
 	echo "DefaultEncryption Never" >> /etc/cups/cupsd.conf && \
-	echo "AccessLog /logs/access_log" >> /etc/cups/cupsd.conf && \
-	echo "ErrorLog /logs/error_log" >> /etc/cups/cupsd.conf
+	sed -i 's#ErrorLog /var/log/cups/error_log#ErrorLog /logs/error_log#' /etc/cups/cups-files.conf && \
+	sed -i 's#AccessLog /var/log/cups/access_log#AccessLog /logs/access_log#' /etc/cups/cups-files.conf
