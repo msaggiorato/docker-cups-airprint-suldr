@@ -19,6 +19,7 @@ echo $CUPSADMIN:$CUPSPASSWORD | chpasswd
 
 mkdir -p /config/ppd
 mkdir -p /services
+mkdir -p /logs
 rm -rf /etc/avahi/services/*
 rm -rf /etc/cups/ppd
 ln -s /config/ppd /etc/cups
