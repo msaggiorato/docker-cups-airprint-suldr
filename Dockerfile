@@ -1,20 +1,6 @@
 FROM ubuntu:20.04
 
-ARG SULDR_REPO="deb https://www.bchemnet.com/suldr/ debian extra"
-ARG SULDR_KEYRING_URL=http://www.bchemnet.com/suldr/pool/debian/extra/su/suldr-keyring_2_all.deb
-ARG SULDR_KEYRING_DEB=suldr-keyring_2_all.deb
-
-# Appropriate version for CLP-510. Can be overriden in build command if needed.
-# See https://www.bchemnet.com/suldr/supported.html for all supported models.
-ARG SULDR_PACKAGE=suld-driver2-1.00.39
-
-RUN apt-get update && apt-get upgrade -y && apt-get install -y software-properties-common
-
-ADD $SULDR_KEYRING_URL /tmp/$SULDR_KEYRING_DEB
-
-RUN dpkg -i "/tmp/$SULDR_KEYRING_DEB" && \
-	apt-add-repository "$SULDR_REPO" && \
-	apt-get update && apt-get install -y \
+RUN apt-get update && apt-get install -y \
 	cups \
 	libcupsimage2 \
 	libcups2-dev \
@@ -22,10 +8,10 @@ RUN dpkg -i "/tmp/$SULDR_KEYRING_DEB" && \
 	python3-pip \
 	rsync \
 	avahi-daemon \
-	$SULDR_PACKAGE \
+	printer-driver-splix \
 	&& pip3 --no-cache-dir install --upgrade pip \
 	&& pip3 install pycups \
-	&& rm -rf /var/lib/apt/lists/* "/tmp/$SULDR_KEYRING_DEB"
+	&& rm -rf /var/lib/apt/lists/* /tmp/*
 
 # This will use port 631
 EXPOSE 631
